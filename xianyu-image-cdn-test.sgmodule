@@ -1,0 +1,10 @@
+#!name=闲鱼图片 CDN 屏蔽测试
+#!desc=临时屏蔽闲鱼常用图片 CDN，用于确认 Shadowrocket 域名规则是否实际作用于闲鱼。会导致商品图片无法加载。
+#!author=local
+
+[Rule]
+DOMAIN,img.alicdn.com,REJECT
+DOMAIN,heic.alicdn.com,REJECT
+DOMAIN,ilce.alicdn.com,REJECT
+DOMAIN,ossgw.alicdn.com,REJECT
+DOMAIN,dorangesource.alicdn.com,REJECT
