@@ -1,18 +1,31 @@
 // Shadowrocket HTTP response script.
-// Turns Xianyu Live Photos into still images by removing their motion-file ID.
+// Turns Xianyu Live Photos into still images by removing their motion-file ID
+// and rewriting the special Live Photo object name to its static HEIC variant.
 
 (function () {
   try {
     const payload = JSON.parse($response.body);
-    let removed = 0;
+    let removedIds = 0;
+    let rewrittenUrls = 0;
 
-    function stripLivePhotoId(value) {
+    function staticizeLivePhoto(value) {
       if (Array.isArray(value)) {
-        for (const entry of value) stripLivePhotoId(entry);
-        return;
+        for (let index = 0; index < value.length; index += 1) {
+          value[index] = staticizeLivePhoto(value[index]);
+        }
+        return value;
       }
 
-      if (!value || typeof value !== "object") return;
+      if (typeof value === "string") {
+        const rewritten = value
+          .replace(/~livephoto~_/gi, "_")
+          .replace(/%7Elivephoto%7E_/gi, "_");
+
+        if (rewritten !== value) rewrittenUrls += 1;
+        return rewritten;
+      }
+
+      if (!value || typeof value !== "object") return value;
 
       if (
         value.extraInfo &&
@@ -20,18 +33,23 @@
         Object.prototype.hasOwnProperty.call(value.extraInfo, "lFileId")
       ) {
         delete value.extraInfo.lFileId;
-        removed += 1;
+        removedIds += 1;
       }
 
       for (const key of Object.keys(value)) {
-        stripLivePhotoId(value[key]);
+        value[key] = staticizeLivePhoto(value[key]);
       }
+
+      return value;
     }
 
-    stripLivePhotoId(payload);
+    staticizeLivePhoto(payload);
 
-    if (removed > 0) {
-      console.log(`[Xianyu Live Photo] removed ${removed} lFileId field(s)`);
+    if (removedIds > 0 || rewrittenUrls > 0) {
+      console.log(
+        `[Xianyu Live Photo] removed ${removedIds} lFileId field(s), ` +
+          `rewrote ${rewrittenUrls} Live Photo URL(s)`
+      );
       $done({ body: JSON.stringify(payload) });
     } else {
       $done({});

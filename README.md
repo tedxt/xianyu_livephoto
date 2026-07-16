@@ -1,6 +1,6 @@
 # 闲鱼 Live 图静态化
 
-目标是保留 Live 图的静态画面，只移除客户端启动动态部分所需的 `lFileId`。
+目标是保留 Live 图的静态画面，同时移除客户端启动动态部分所需的 `lFileId` 和 URL 特征。
 
 已确认闲鱼公开详情接口 `mtop.taobao.idle.awesome.detail/1.0` 会返回类似数据：
 
@@ -14,7 +14,12 @@
 }
 ```
 
-普通 HEIC 图片没有 `lFileId`，所以脚本只删除该字段，不会删除图片 URL。
+普通 HEIC 图片没有 `lFileId`。新版脚本会进行两项处理：
+
+1. 删除所有 `extraInfo.lFileId`。
+2. 将 URL 中的 `~livephoto~_` 改为 `_`。
+
+已验证改写后的地址仍由阿里图片 CDN 返回同一张静态图片，HTTP 状态为 `200`。
 
 ## 安装
 

@@ -1,9 +1,9 @@
 #!name=闲鱼 Live 图静态化
-#!desc=删除闲鱼商品详情中的 Live Photo 动态文件标识，保留静态图片，避免动态部分启动播放。
+#!desc=删除闲鱼 Live Photo 动态文件标识，并将其 URL 改写为可用的静态 HEIC 地址。
 #!author=local
 
 [Script]
-闲鱼Live图静态化 = type=http-response, pattern=^https?:\/\/(?:h5api\.m\.goofish\.com\/h5|(?:acs\.m\.(?:goofish|taobao)\.com|api\.goofish\.com)\/gw)\/mtop\.taobao\.idle\.awesome\.detail\/1\.0\/, requires-body=true, max-size=0, binary-body-mode=false, script-path=https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
+闲鱼Live图静态化 = type=http-response, pattern=^https?:\/\/[^\/]+\/(?:h5|gw)\/(?:mtop\.taobao\.idle\.(?:awesome\.detail|item\.info|mach\.item\.service\.faas\.item))\/[^\/]+\/, requires-body=true, max-size=0, binary-body-mode=false, script-path=https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
 
 [MITM]
-hostname = %APPEND% h5api.m.goofish.com, acs.m.goofish.com, acs.m.taobao.com, api.goofish.com
+hostname = %APPEND% h5api.m.goofish.com, acs.m.goofish.com, acs.m.taobao.com, rhdc-acs.m.taobao.com, api.goofish.com
