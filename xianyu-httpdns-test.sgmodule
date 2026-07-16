@@ -1,0 +1,8 @@
+#!name=闲鱼 HTTPDNS 回退测试
+#!desc=临时阻断抓包中观察到的阿里 HTTPDNS 服务，尝试迫使闲鱼回退到系统 DNS。可能影响其他淘宝系 App，仅用于诊断。
+#!author=local
+
+[Rule]
+DOMAIN,amdc.m.taobao.com,REJECT
+IP-CIDR,59.82.0.0/16,REJECT,no-resolve
+IP-CIDR,47.246.103.0/24,REJECT,no-resolve

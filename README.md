@@ -42,3 +42,5 @@ https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu-livephoto.s
 `xianyu-video-cdn-test.sgmodule` 是域名级诊断模块，不需要 HTTPS 解密。它会临时屏蔽闲鱼可能使用的视频 CDN，同时也会影响普通商品视频。若启用后 Live 图不再打断后台播放，说明应继续从这些视频域名中逐个缩小范围。
 
 `xianyu-image-cdn-test.sgmodule` 会临时屏蔽闲鱼常用图片 CDN，用于确认 Shadowrocket 的域名规则是否真的作用于闲鱼。启用并清除闲鱼缓存后，新打开商品的图片应无法加载；测试后请关闭该模块。
+
+`xianyu-httpdns-test.sgmodule` 会临时阻断 HAR 中观察到的阿里 HTTPDNS 域名和调度 IP 段，尝试迫使闲鱼回退到系统 DNS。它可能影响淘宝、闲鱼等阿里系 App，只能作为短时间诊断模块使用。
