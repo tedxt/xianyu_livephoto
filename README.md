@@ -21,6 +21,8 @@
 
 已验证改写后的地址仍由阿里图片 CDN 返回同一张静态图片，HTTP 状态为 `200`。
 
+主模块还包含一条图片 CDN 兜底重定向：即使闲鱼 App 的原生详情接口无法执行响应脚本，只要 `img.alicdn.com` 请求能够被 Shadowrocket 处理，带 `~livephoto~_` 的地址也会被重定向到静态版本。
+
 ## 安装
 
 1. 在 Shadowrocket 中导入 `xianyu-livephoto.sgmodule` 并启用。
