@@ -38,3 +38,5 @@ https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu-livephoto.s
 如果启用后完全没有脚本日志，说明闲鱼 App 的原生详情请求未被 Shadowrocket 解密；可先在 Safari 打开商品 H5 页面验证脚本匹配情况。
 
 `xianyu-livephoto-block.sgmodule` 是不需要 JavaScript 的兜底测试版，会直接拒绝文件名中含 `~livephoto~_` 的资源。它也会让对应的静态图片消失，因此不建议长期使用。
+
+`xianyu-video-cdn-test.sgmodule` 是域名级诊断模块，不需要 HTTPS 解密。它会临时屏蔽闲鱼可能使用的视频 CDN，同时也会影响普通商品视频。若启用后 Live 图不再打断后台播放，说明应继续从这些视频域名中逐个缩小范围。

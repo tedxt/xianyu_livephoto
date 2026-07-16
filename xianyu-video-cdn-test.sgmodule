@@ -1,0 +1,8 @@
+#!name=闲鱼视频 CDN 屏蔽测试
+#!desc=临时屏蔽闲鱼可能使用的视频 CDN，用于判断 Live 图动态文件是否来自独立视频域名。会同时影响普通商品视频。
+#!author=local
+
+[Rule]
+DOMAIN,video.goofish.com,REJECT
+DOMAIN,cloud.video.taobao.com,REJECT
+DOMAIN-SUFFIX,cloudvideocdn.taobao.com,REJECT
