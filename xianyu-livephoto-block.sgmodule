@@ -1,0 +1,9 @@
+#!name=闲鱼 Live 图直接屏蔽（测试版）
+#!desc=直接拒绝文件名包含 ~livephoto~_ 的闲鱼图片。会导致对应静态图片也无法显示，仅用于验证和兜底。
+#!author=local
+
+[URL Rewrite]
+^https?:\/\/img\.alicdn\.com\/.*~livephoto~_.* - reject
+
+[MITM]
+hostname = %APPEND% img.alicdn.com
