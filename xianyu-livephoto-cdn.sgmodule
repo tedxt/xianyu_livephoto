@@ -1,0 +1,17 @@
+#!name=闲鱼 LivePhoto CDN 屏蔽
+#!desc=只拦截 livephoto.cloudvideocdn.taobao.com，阻止实况图视频播放，保留静态封面。无需解密淘宝 mtop。
+#!author=tedxt
+#!homepage=https://github.com/tedxt/xianyu_livephoto
+
+[Rule]
+DOMAIN,livephoto.cloudvideocdn.taobao.com,REJECT
+DOMAIN-SUFFIX,livephoto.cloudvideocdn.taobao.com,REJECT
+URL-REGEX,^https?:\/\/[^\/]*livephoto\.cloudvideocdn\.taobao\.com\/,REJECT
+URL-REGEX,^https?:\/\/.+(~|%7[Ee])livephoto(~|%7[Ee]).+\.mp4(\?|$),REJECT
+
+[URL Rewrite]
+^https?:\/\/livephoto\.cloudvideocdn\.taobao\.com\/ reject-200
+^https?:\/\/[^\/]+\/.+(~|%7[Ee])livephoto(~|%7[Ee]).+\.mp4 reject-200
+
+[MITM]
+hostname = %APPEND% livephoto.cloudvideocdn.taobao.com

@@ -1,12 +1,26 @@
-#!name=闲鱼 Live 图静态化
-#!desc=通过详情响应脚本和图片 CDN 重定向两种方式，将闲鱼 Live Photo 静态化。
-#!author=local
+#!name=闲鱼 LivePhoto 屏蔽
+#!desc=拦截 livephoto.cloudvideocdn.taobao.com 阻止实况图视频播放，并尝试把封面静态化。静态封面仍显示。
+#!author=tedxt
+#!homepage=https://github.com/tedxt/xianyu_livephoto
+
+# 商详会把封面图改写成：
+#   https://livephoto.cloudvideocdn.taobao.com/<原path>~livephoto~.mp4
+# 域名 REJECT 不依赖解密淘宝 mtop。
+# 不要拒绝 img/gw.alicdn.com 上带 ~livephoto~ 的静图，否则封面也会挂。
+
+[Rule]
+DOMAIN,livephoto.cloudvideocdn.taobao.com,REJECT
+DOMAIN-SUFFIX,livephoto.cloudvideocdn.taobao.com,REJECT
+URL-REGEX,^https?:\/\/[^\/]*livephoto\.cloudvideocdn\.taobao\.com\/,REJECT
+URL-REGEX,^https?:\/\/.+(~|%7[Ee])livephoto(~|%7[Ee]).+\.mp4(\?|$),REJECT
 
 [URL Rewrite]
+^https?:\/\/livephoto\.cloudvideocdn\.taobao\.com\/ reject-200
+^https?:\/\/[^\/]+\/.+(~|%7[Ee])livephoto(~|%7[Ee]).+\.mp4 reject-200
 ^https?:\/\/img\.alicdn\.com\/(.*)~livephoto~_(.*)$ https://img.alicdn.com/$1_$2 302
 
 [Script]
 闲鱼Live图静态化 = type=http-response, pattern=^https?:\/\/[^\/]+\/(?:h5|gw)\/(?:mtop\.taobao\.idle\.(?:awesome\.detail|item\.info|mach\.item\.service\.faas\.item))\/[^\/]+\/, requires-body=true, max-size=0, binary-body-mode=false, script-path=https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
 
 [MITM]
-hostname = %APPEND% h5api.m.goofish.com, acs.m.goofish.com, acs.m.taobao.com, rhdc-acs.m.taobao.com, api.goofish.com, img.alicdn.com
+hostname = %APPEND% livephoto.cloudvideocdn.taobao.com, h5api.m.goofish.com, acs.m.goofish.com, acs.m.taobao.com, rhdc-acs.m.taobao.com, api.goofish.com, img.alicdn.com

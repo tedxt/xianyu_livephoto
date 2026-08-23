@@ -1,46 +1,58 @@
-# 闲鱼 Live 图静态化
+# 闲鱼 LivePhoto 屏蔽
 
-目标是保留 Live 图的静态画面，同时移除客户端启动动态部分所需的 `lFileId` 和 URL 特征。
+仓库：<https://github.com/tedxt/xianyu_livephoto>
 
-已确认闲鱼公开详情接口 `mtop.taobao.idle.awesome.detail/1.0` 会返回类似数据：
+闲鱼商详会把封面图 URL 中含 `~livephoto~` 的资源改写成：
 
-```json
-{
-  "url": "http://img.alicdn.com/...~livephoto~_...heic",
-  "extraInfo": {
-    "raw": "true",
-    "lFileId": "1446608692560922494"
-  }
-}
+```text
+https://livephoto.cloudvideocdn.taobao.com/<原路径去后缀>~livephoto~.mp4
 ```
 
-普通 HEIC 图片没有 `lFileId`。新版脚本会进行两项处理：
+然后交给播放器自动播放。拦这个视频域名即可停播，静态封面仍走 `img.alicdn.com` / `gw.alicdn.com`，不要误杀。
 
-1. 删除所有 `extraInfo.lFileId`。
-2. 将 URL 中的 `~livephoto~_` 改为 `_`。
-
-已验证改写后的地址仍由阿里图片 CDN 返回同一张静态图片，HTTP 状态为 `200`。
-
-主模块还包含一条图片 CDN 兜底重定向：即使闲鱼 App 的原生详情接口无法执行响应脚本，只要 `img.alicdn.com` 请求能够被 Shadowrocket 处理，带 `~livephoto~_` 的地址也会被重定向到静态版本。
+公开详情接口 `mtop.taobao.idle.awesome.detail/1.0` 里，Live 图还可能带 `extraInfo.lFileId` 和 `~livephoto~_` 文件名。脚本会删掉动态文件 ID，并把该文件名改回静态图。
 
 ## 安装
 
-1. 在 Shadowrocket 中导入 `xianyu-livephoto.sgmodule` 并启用。
-2. 安装并完全信任 Shadowrocket CA 证书，开启模块所列域名的 MitM。
-3. 完全退出闲鱼后重新打开含 Live 图的商品进行测试。
-
-模块地址：
+Shadowrocket 直接导入主模块：
 
 ```text
 https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu-livephoto.sgmodule
 ```
 
-如果启用后完全没有脚本日志，说明闲鱼 App 的原生详情请求未被 Shadowrocket 解密；可先在 Safari 打开商品 H5 页面验证脚本匹配情况。
+只拦视频 CDN、不解密淘宝接口的精简版：
 
-`xianyu-livephoto-block.sgmodule` 是不需要 JavaScript 的兜底测试版，会直接拒绝文件名中含 `~livephoto~_` 的资源。它也会让对应的静态图片消失，因此不建议长期使用。
+```text
+https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu-livephoto-cdn.sgmodule
+```
 
-`xianyu-video-cdn-test.sgmodule` 是域名级诊断模块，不需要 HTTPS 解密。它会临时屏蔽闲鱼可能使用的视频 CDN，同时也会影响普通商品视频。若启用后 Live 图不再打断后台播放，说明应继续从这些视频域名中逐个缩小范围。
+脚本地址：
 
-`xianyu-image-cdn-test.sgmodule` 会临时屏蔽闲鱼常用图片 CDN，用于确认 Shadowrocket 的域名规则是否真的作用于闲鱼。启用并清除闲鱼缓存后，新打开商品的图片应无法加载；测试后请关闭该模块。
+```text
+https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
+```
 
-`xianyu-httpdns-test.sgmodule` 会临时阻断 HAR 中观察到的阿里 HTTPDNS 域名和调度 IP 段，尝试迫使闲鱼回退到系统 DNS。它可能影响淘宝、闲鱼等阿里系 App，只能作为短时间诊断模块使用。
+1. Shadowrocket → 配置 → 模块 → 右上角「+」→ 粘贴上面的 raw 地址并启用。
+2. 建议开启增强模式，避免闲鱼 HttpDNS 直连 IP 漏拦。
+3. 主模块若要让详情脚本生效，需安装并信任 Shadowrocket CA，并开启模块所列域名的 MitM。闲鱼 mtop 常有证书锁定，解不了也不影响 CDN 拦截。
+4. 完全退出闲鱼后再进商详：封面还在，画面不再循环播放。
+
+也可把下面两行贴进当前配置的 `[Rule]` 靠前位置：
+
+```text
+DOMAIN,livephoto.cloudvideocdn.taobao.com,REJECT
+DOMAIN-SUFFIX,livephoto.cloudvideocdn.taobao.com,REJECT
+```
+
+## 脚本会做什么
+
+1. 删除所有 `extraInfo.lFileId`。
+2. 将 URL 中的 `~livephoto~_` 改为 `_`（已验证静态图仍返回 200）。
+3. 对 `type=0` 且 URL 含 `~livephoto~` 的媒体，把 `videoId` 置为 `"0"`，清空 `photoVideoUrl`，避免再走 `mtop.idle.cloud.video.query` 点播。
+
+## 其他模块
+
+- `xianyu-livephoto-block.sgmodule`：直接拒绝文件名含 `~livephoto~_` 的图片，静态封面也会消失，仅用于验证。
+- `xianyu-video-cdn-test.sgmodule`：临时屏蔽更多视频 CDN，会误伤普通商品视频。
+- `xianyu-image-cdn-test.sgmodule`：临时屏蔽图片 CDN，用于确认规则是否打到闲鱼。
+- `xianyu-httpdns-test.sgmodule`：临时阻断阿里 HTTPDNS，可能影响淘宝系 App。
