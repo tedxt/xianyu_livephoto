@@ -2,6 +2,11 @@
 
 仓库：<https://github.com/tedxt/xianyu_livephoto>
 
+## 最新更新
+
+模块规则和响应脚本已同步：先拒绝 LivePhoto 视频 CDN 请求，再清理详情数据中的
+`videoId` / `photoVideoUrl`，只保留静态封面，避免播放器初始化时影响后台音频。
+
 闲鱼商详会把封面图 URL 中含 `~livephoto~` 的资源改写成：
 
 ```text
@@ -36,6 +41,12 @@ https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.j
 2. 建议开启增强模式，避免闲鱼 HttpDNS 直连 IP 漏拦。
 3. 主模块若要让详情脚本生效，需安装并信任 Shadowrocket CA，并开启模块所列域名的 MitM。闲鱼 mtop 常有证书锁定，解不了也不影响 CDN 拦截。
 4. 完全退出闲鱼后再进商详：封面还在，画面不再循环播放。
+
+主模块地址（可直接复制到 Shadowrocket 导入）：
+
+```text
+https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu-livephoto.sgmodule
+```
 
 也可把下面两行贴进当前配置的 `[Rule]` 靠前位置：
 
