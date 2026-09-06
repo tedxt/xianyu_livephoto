@@ -64,6 +64,7 @@ function staticizeLivePhoto(value, stats) {
   }
 
   if (isLivePhotoMedia(value)) {
+    stats.livePhotoNodes += 1;
     if ("videoId" in value && value.videoId && value.videoId !== "0") {
       value.videoId = "0";
       stats.clearedVideoIds += 1;
@@ -88,6 +89,7 @@ function staticizeLivePhoto(value, stats) {
     const stats = {
       removedIds: 0,
       rewrittenUrls: 0,
+      livePhotoNodes: 0,
       clearedVideoIds: 0,
       clearedPhotoVideoUrls: 0,
     };
@@ -102,6 +104,7 @@ function staticizeLivePhoto(value, stats) {
     ) {
       console.log(
         `[Xianyu Live Photo] ${REPO} removed ${stats.removedIds} lFileId, ` +
+          `found ${stats.livePhotoNodes} LivePhoto node(s), ` +
           `rewrote ${stats.rewrittenUrls} URL(s), ` +
           `cleared ${stats.clearedVideoIds} videoId / ${stats.clearedPhotoVideoUrls} photoVideoUrl`
       );
