@@ -12,6 +12,7 @@ URL-REGEX,^https?:\/\/.+(?:~|%7[Ee])livephoto(?:~|%7[Ee]).*\.(?:mp4|mov|m4v|m3u8
 [URL Rewrite]
 ^https?:\/\/livephoto\.cloudvideocdn\.taobao\.com\/ reject-200
 ^https?:\/\/[^\/]+\/.+(?:~|%7[Ee])livephoto(?:~|%7[Ee]).*\.(?:mp4|mov|m4v|m3u8) reject-200
+^https?:\/\/(?:img|gw)\.alicdn\.com\/(.*)(?:~livephoto~_|%7[eE]livephoto%7[eE]_)(.*)$ https://img.alicdn.com/$1_$2 302
 
 [MITM]
 hostname = %APPEND% livephoto.cloudvideocdn.taobao.com

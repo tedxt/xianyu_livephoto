@@ -4,8 +4,8 @@
 
 ## 最新更新
 
-模块规则和响应脚本已同步：先拒绝 LivePhoto 视频 CDN 请求，再清理详情数据中的
-`videoId` / `photoVideoUrl`，只保留静态封面，避免播放器初始化时影响后台音频。
+模块规则和响应脚本已同步：优先把 LivePhoto 封面改写为普通静态图，拒绝 LivePhoto 视频 CDN 请求，再清理详情数据中的
+`videoId` / `photoVideoUrl`，尽量在播放器初始化前阻止动态图链路，避免影响后台音频和小窗播放。
 
 闲鱼商详会把封面图 URL 中含 `~livephoto~` 的资源改写成：
 
@@ -13,7 +13,7 @@
 https://livephoto.cloudvideocdn.taobao.com/<原路径去后缀>~livephoto~.mp4
 ```
 
-然后交给播放器自动播放。拦这个视频域名即可停播，静态封面仍走 `img.alicdn.com` / `gw.alicdn.com`，不要误杀。
+然后交给播放器自动播放。模块会先把 `img.alicdn.com` / `gw.alicdn.com` 上的 LivePhoto 封面改写为普通静态图，再拦截视频请求作为兜底。
 
 公开详情接口 `mtop.taobao.idle.awesome.detail/1.0` 里，Live 图还可能带 `extraInfo.lFileId` 和 `~livephoto~_` 文件名。脚本会删掉动态文件 ID，并把该文件名改回静态图。
 
