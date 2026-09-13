@@ -25,10 +25,8 @@ function rewriteLivePhotoString(value) {
 
 function isLivePhotoMedia(node) {
   if (!node || typeof node !== "object") return false;
-  const type = node.type;
-  const isImage = type === 0 || type === "0" || type === undefined;
-  const url = String(node.url || node.photoVideoUrl || node.coverUrl || "");
-  return isImage && containsLivePhoto(url);
+  const urls = [node.url, node.photoVideoUrl, node.coverUrl, node.videoUrl, node.livePhotoUrl];
+  return urls.some(containsLivePhoto);
 }
 
 function staticizeLivePhoto(value, stats) {

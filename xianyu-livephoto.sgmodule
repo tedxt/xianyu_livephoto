@@ -20,7 +20,8 @@ URL-REGEX,^https?:\/\/.+(~|%7[Ee])livephoto(~|%7[Ee]).+\.mp4(\?|$),REJECT
 ^https?:\/\/img\.alicdn\.com\/(.*)~livephoto~_(.*)$ https://img.alicdn.com/$1_$2 302
 
 [Script]
-闲鱼Live图静态化 = type=http-response, pattern=^https?:\/\/[^\/]+\/(?:h5|gw)\/(?:mtop\.taobao\.idle\.(?:awesome\.detail|item\.info|mach\.item\.service\.faas\.item))\/[^\/]+\/, requires-body=true, max-size=0, binary-body-mode=false, script-path=https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
+# 覆盖 h5/gw/api/acs 等入口，确保在 LivePhoto 播放器拿到 videoId 前清洗响应
+闲鱼Live图静态化 = type=http-response, pattern=^https?:\/\/[^\/]+\/(?:(?:h5|gw|api|acs)\/)?(?:mtop\.taobao\.idle\.(?:awesome\.detail|item\.info|mach\.item\.service\.faas\.item)|mtop\.idle\.cloud\.video\.query)(?:\/|$), requires-body=true, max-size=0, binary-body-mode=false, script-path=https://raw.githubusercontent.com/tedxt/xianyu_livephoto/main/xianyu_livephoto.js
 
 [MITM]
 hostname = %APPEND% livephoto.cloudvideocdn.taobao.com, h5api.m.goofish.com, acs.m.goofish.com, acs.m.taobao.com, rhdc-acs.m.taobao.com, api.goofish.com, img.alicdn.com
